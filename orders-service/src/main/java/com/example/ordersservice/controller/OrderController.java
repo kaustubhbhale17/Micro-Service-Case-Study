@@ -1,10 +1,52 @@
 package com.example.ordersservice.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.ordersservice.entity.Order;
+import com.example.ordersservice.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
 public class OrderController {
 
+    @Autowired
+    private OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @PostMapping("/")
+    public Order saveOrder(@RequestBody Order order){
+        return orderService.saveOrder(order);
+    }
+
+    @GetMapping("/")
+    public List<Order> getAllOrders(){
+        return orderService.getAllOrders();
+    }
+
+    @GetMapping("/{id}")
+    public Order getOrderById(@PathVariable("id") String orderId){
+        return orderService.getOrderById(orderId);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Order> updateOrderById(@PathVariable("id") String orderId,@RequestBody Order order){
+        return orderService.updateOrder(orderId,order);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteById(@PathVariable("id") String orderId){
+        return orderService.deleteOrderById(orderId);
+    }
+
+    @GetMapping("/orderNumber/{orderNumber}")
+    public Order getByOrderNumber(@PathVariable("orderNumber") Long orderNumber){
+        return orderService.getByOrderNumber(orderNumber);
+    }
 }

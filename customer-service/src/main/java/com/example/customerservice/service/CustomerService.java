@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -28,7 +29,11 @@ public class CustomerService {
     }
 
     public Customer getCustomerById(String customerId) {
-        return customerRespository.getByCustomerId(customerId);
+        Optional<Customer> customerData = customerRespository.findById(customerId);
+        if(customerData.isPresent()){
+            return customerData.get();
+        }
+        return null;
     }
 
     public ResponseEntity<HttpStatus> deleteCustomerById(String customerId) {
