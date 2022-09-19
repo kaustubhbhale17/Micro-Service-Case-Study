@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -29,17 +28,18 @@ public class CustomerService {
     }
 
     public Customer getCustomerById(String customerId) {
-        Optional<Customer> customerData = customerRespository.findById(customerId);
-        if(customerData.isPresent()){
-            return customerData.get();
-        }
+       List<Customer> customerList = getAllCustomers();
+       for(Customer customer : customerList){
+           if(customer.getCustomerId().equals(customerId))
+               return customer;
+       }
         return null;
     }
 
     public ResponseEntity<HttpStatus> deleteCustomerById(String customerId) {
-        Customer customer = getCustomerById(customerId);
-        if(customer!=null){
-            customerRespository.deleteById(customerId);
+        Customer _customer = getCustomerById(customerId);
+        if(_customer!=null){
+            customerRespository.delete(_customer);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

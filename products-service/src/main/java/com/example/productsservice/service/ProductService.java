@@ -25,24 +25,30 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    
     public List<Product> getAllProducts() {
 
         return productRepository.findAll();
     }
 
     public Product getProductById(String productId) {
-        
-        return productRepository.getByProductId(productId);
+        List<Product> productList = getAllProducts();
+        for(Product product : productList){
+            if(product.getProductId().equals(productId)){
+                return product;
+            }
+        }
+        return null;
     }
 
     public ResponseEntity<HttpStatus> deleteProductById(String productId) {
-        Product product = getProductById(productId);
-        if(product!=null){
-            productRepository.deleteById(productId);
-            return new ResponseEntity<>(HttpStatus.OK);
+        List<Product> productList = getAllProducts();
+        for(Product product:productList){
+            if(product.getProductId().equals(productId)){
+                productRepository.delete(product);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     public Product updateProductById(String productId, Product product) {

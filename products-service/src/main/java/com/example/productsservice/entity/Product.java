@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "product")
 public class Product {
     @Id
+    private String productNumber;
     private String productId;
     private String productName;
     private int productQty;
