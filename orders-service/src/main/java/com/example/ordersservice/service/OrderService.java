@@ -64,10 +64,15 @@ public class OrderService {
     }
 
     public ResponseTemplateVO getOrderWithProductCustomer(String orderId) {
+        Order order = null;
         ResponseTemplateVO vo = new ResponseTemplateVO();
-        Order order = getOrderById(orderId);
-        Product product = restTemplate.getForObject("http://localhost:3001/product/"+order.getProductId(),Product.class);
-        Customer customer = restTemplate.getForObject("http://localhost:3001/product/"+order.getCustomerId(),Customer.class);
+        Optional<Order> orderData = orderRepository.findById(orderId);
+        if(orderData.isPresent()){
+            order = orderData.get();
+        }
+        //System.out.println(order);
+        Product product = restTemplate.getForObject("http://PRODUCT-SERVICE/product/"+order.getProductId(),Product.class);
+        Customer customer = restTemplate.getForObject("http://CUSTOMER-SERVICE/customer/"+order.getCustomerId(),Customer.class);
         vo.setOrder(order);
         vo.setProduct(product);
         vo.setCustomer(customer);

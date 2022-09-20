@@ -32,13 +32,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseTemplateVO getOrderWithProductCustomer(String orderId){
+    public ResponseTemplateVO getOrderWithProductCustomer(@PathVariable("id") String orderId){
         return orderService.getOrderWithProductCustomer(orderId);
-    }
-
-    @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable("id") String orderId){
-        return orderService.getOrderById(orderId);
     }
 
     @PutMapping("/{id}")
