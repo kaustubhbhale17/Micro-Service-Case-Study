@@ -1,11 +1,15 @@
 package com.example.ordersservice.service;
 
+import com.example.ordersservice.VO.Customer;
+import com.example.ordersservice.VO.Product;
+import com.example.ordersservice.VO.ResponseTemplateVO;
 import com.example.ordersservice.entity.Order;
 import com.example.ordersservice.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +18,9 @@ import java.util.Optional;
 public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
@@ -28,7 +35,7 @@ public class OrderService {
     }
 
     public Order getOrderById(String orderId) {
-        Optional<Order> orderData = orderRepository.findById(orderId);
+        Optional<Order> orderData =  orderRepository.findById(orderId);
         if(orderData.isPresent()){
             return orderData.get();
         }
@@ -50,19 +57,20 @@ public class OrderService {
     public ResponseEntity<HttpStatus> deleteOrderById(String orderId) {
         Order order = getOrderById(orderId);
         if(order!=null){
-            orderRepository.deleteById(orderId);
+            orderRepository.delete(order);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    public Order getByOrderNumber(Long orderNumber) {
-        List<Order> orders = getAllOrders();
-        for(Order o : orders){
-            if(o.getOrderNumber().equals(orderNumber)){
-                return o;
-            }
-        }
-        return null;
+    public ResponseTemplateVO getOrderWithProductCustomer(String orderId) {
+        ResponseTemplateVO vo = new ResponseTemplateVO();
+        Order order = getOrderById(orderId);
+        Product product = restTemplate.getForObject("http://localhost:3001/product/"+order.getProductId(),Product.class);
+        Customer customer = restTemplate.getForObject("http://localhost:3001/product/"+order.getCustomerId(),Customer.class);
+        vo.setOrder(order);
+        vo.setProduct(product);
+        vo.setCustomer(customer);
+        return vo;
     }
 }

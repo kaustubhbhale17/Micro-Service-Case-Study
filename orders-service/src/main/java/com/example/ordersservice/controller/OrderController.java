@@ -1,5 +1,6 @@
 package com.example.ordersservice.controller;
 
+import com.example.ordersservice.VO.ResponseTemplateVO;
 import com.example.ordersservice.entity.Order;
 import com.example.ordersservice.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    public ResponseTemplateVO getOrderWithProductCustomer(String orderId){
+        return orderService.getOrderWithProductCustomer(orderId);
+    }
+
+    @GetMapping("/{id}")
     public Order getOrderById(@PathVariable("id") String orderId){
         return orderService.getOrderById(orderId);
     }
@@ -45,8 +51,4 @@ public class OrderController {
         return orderService.deleteOrderById(orderId);
     }
 
-    @GetMapping("/orderNumber/{orderNumber}")
-    public Order getByOrderNumber(@PathVariable("orderNumber") Long orderNumber){
-        return orderService.getByOrderNumber(orderNumber);
-    }
 }
